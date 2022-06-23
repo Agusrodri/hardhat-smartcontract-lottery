@@ -25,6 +25,12 @@ module.exports = {
             accounts: [PRIVATE_KEY],
         },
     },
+    etherscan: {
+        // yarn hardhat verify --network <NETWORK> <CONTRACT_ADDRESS> <CONSTRUCTOR_PARAMETERS>
+        apiKey: {
+            rinkeby: ETHERSCAN_API_KEY,
+        },
+    },
     gasReporter: {
         enabled: false,
         outputFile: "gas-report.txt",
@@ -42,5 +48,8 @@ module.exports = {
         player: {
             default: 1,
         },
+    },
+    mocha: {
+        timeout: 500000, //300 seconds max
     },
 }
