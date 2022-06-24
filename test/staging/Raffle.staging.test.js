@@ -31,7 +31,7 @@ developmentChains.includes(network.name)
                               const recentWinner = await raffle.getRecentWinner()
                               const raffleState = await raffle.getRaffleState()
                               const winnerEndingBalance = await accounts[0].getBalance()
-                              const endingTimeStamp = await raffle.getLastTimeStamp()
+                              const endingTimeStamp = await raffle.getLatestTimesTamp()
 
                               await expect(raffle.getPlayer(0)).to.be.reverted
                               assert.equal(recentWinner.toString(), accounts[0].address)

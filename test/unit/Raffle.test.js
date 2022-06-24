@@ -4,11 +4,12 @@ const { developmentChains, networkConfig } = require("../../helper-hardhat-confi
 
 !developmentChains.includes(network.name)
     ? describe.skip
-    : describe("Raffle Unit Tests", async function () {
+    : describe("Raffle Unit Tests", function () {
           let raffle, vrfCoordinatorV2Mock, raffleEntranceFee, deployer, interval
           const chainId = network.config.chainId
 
           beforeEach(async function () {
+              accounts = await ethers.getSigners()
               deployer = (await getNamedAccounts()).deployer
               await deployments.fixture(["all"])
               raffle = await ethers.getContract("Raffle", deployer)
@@ -17,7 +18,7 @@ const { developmentChains, networkConfig } = require("../../helper-hardhat-confi
               interval = await raffle.getInterval()
           })
 
-          describe("constructor", async function () {
+          describe("constructor", function () {
               it("initializes the raffle correctly", async function () {
                   //Ideally we make our tests hace just 1 assert per "it"
                   const raffleState = await raffle.getRaffleState()
@@ -27,7 +28,7 @@ const { developmentChains, networkConfig } = require("../../helper-hardhat-confi
               })
           })
 
-          describe("enterRaffle", async function () {
+          describe("enterRaffle", function () {
               it("reverts when you don't pay enough", async function () {
                   await expect(raffle.enterRaffle()).to.be.revertedWith(
                       "Raffle__NotEnoughETHEntered"
@@ -59,7 +60,7 @@ const { developmentChains, networkConfig } = require("../../helper-hardhat-confi
               })
           })
 
-          describe("checkUpkeep", async function () {
+          describe("checkUpkeep", function () {
               it("returns false if people haven't sent any ETH", async function () {
                   await network.provider.send("evm_increaseTime", [interval.toNumber() + 1])
                   await network.provider.send("evm_mine", [])
@@ -73,7 +74,7 @@ const { developmentChains, networkConfig } = require("../../helper-hardhat-confi
                   await network.provider.send("evm_mine", [])
                   await raffle.performUpkeep([])
                   const raffleState = await raffle.getRaffleState()
-                  const { upkeepNeeded } = await raffle.callStatic.checkUpkeep()
+                  const { upkeepNeeded } = await raffle.callStatic.checkUpkeep("0x")
                   assert.equal(raffleState.toString(), "1")
                   assert.equal(upkeepNeeded, false)
               })
@@ -94,7 +95,7 @@ const { developmentChains, networkConfig } = require("../../helper-hardhat-confi
               })
           })
 
-          describe("performUpkeep", async function () {
+          describe("performUpkeep", function () {
               it("can only run if checkupkeep is true", async function () {
                   await raffle.enterRaffle({ value: raffleEntranceFee })
                   await network.provider.send("evm_increaseTime", [interval.toNumber() + 1])
@@ -141,10 +142,10 @@ const { developmentChains, networkConfig } = require("../../helper-hardhat-confi
                   const additionalEntrances = 3
                   const startingIndex = 2
                   for (let i = startingIndex; i < startingIndex + additionalEntrances; i++) {
-                      raffle = raffleContract.connect(accounts[i])
+                      raffle = raffle.connect(accounts[i])
                       await raffle.enterRaffle({ value: raffleEntranceFee })
                   }
-                  const startingTimeStamp = await raffle.getLastTimeStamp()
+                  const startingTimeStamp = await raffle.getLatestTimesTamp()
 
                   // This will be more important for our staging tests...
                   await new Promise(async (resolve, reject) => {
