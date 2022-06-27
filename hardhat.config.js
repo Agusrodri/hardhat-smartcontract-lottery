@@ -23,6 +23,10 @@ module.exports = {
             blockConfirmations: 6,
             url: RINKEBY_RPC_URL,
             accounts: [PRIVATE_KEY],
+            saveDeployments: true,
+        },
+        localhost: {
+            chainId: 31337,
         },
     },
     etherscan: {
@@ -39,7 +43,20 @@ module.exports = {
         //coinmarketcap: COINMARKETCAP_API_KEY,
         token: "ETH",
     },
-    solidity: "0.8.7",
+    contractSizer: {
+        runOnCompile: false,
+        only: ["Raffle"],
+    },
+    solidity: {
+        compilers: [
+            {
+                version: "0.8.7",
+            },
+            {
+                version: "0.4.24",
+            },
+        ],
+    },
     namedAccounts: {
         deployer: {
             default: 0,
